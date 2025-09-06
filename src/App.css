@@ -1,0 +1,191 @@
+/* Background styles */
+.bg-clear { background: linear-gradient(to bottom, #4facfe, #00f2fe); }
+.bg-partly { background: linear-gradient(to bottom, #fbc2eb, #a6c1ee); }
+.bg-overcast { background: linear-gradient(to bottom, #757f9a, #d7dde8); }
+.bg-fog { background: linear-gradient(to bottom, #bdc3c7, #2c3e50); }
+.bg-drizzle { background: linear-gradient(to bottom, #74ebd5, #acb6e5); }
+.bg-rain { background: linear-gradient(to bottom, #2c3e50, #3498db); }
+.bg-snow { background: linear-gradient(to bottom, #e0eafc, #cfdef3); }
+.bg-showers { background: linear-gradient(to bottom, #1e3c72, #2a5298); }
+.bg-storm { background: linear-gradient(to bottom, #232526, #414345); }
+
+
+/* Fog background animation */
+.bg-fog {
+  background: linear-gradient(to bottom, #bdc3c7, #2c3e50);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Fog layers */
+.fog-layer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0px,
+    rgba(255, 255, 255, 0.15) 50px,
+    rgba(255, 255, 255, 0.05) 100px
+  );
+  animation: fogMove 60s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Second fog layer for depth */
+.fog-layer:nth-child(2) {
+  opacity: 0.5;
+  animation-duration: 90s;
+}
+
+/* Fog animation keyframes */
+@keyframes fogMove {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+
+
+
+
+/* Rain animation */
+/* Rain container */
+/* Rain container */
+.rain {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+/* Raindrop style */
+.raindrop {
+  position: absolute;
+  width: 2px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.7);
+  bottom: 100%;
+  animation: fall linear infinite;
+}
+
+/* Falling animation */
+@keyframes fall {
+  to {
+    transform: translateY(110vh);
+  }
+}
+
+
+/* Randomize drops */
+.raindrop:nth-child(odd) {
+  background: rgba(200, 200, 255, 0.8);
+}
+
+
+@keyframes rainAnim {
+  from { background-position: 0 0; }
+  to { background-position: 20px 50px; }
+}
+
+.raindrop:nth-child(1)  { left: 5%;  animation-duration: 1s; animation-delay: 0s; }
+.raindrop:nth-child(2)  { left: 12%; animation-duration: 1.4s; animation-delay: 0.3s; }
+.raindrop:nth-child(3)  { left: 20%; animation-duration: 1.2s; animation-delay: 0.1s; }
+.raindrop:nth-child(4)  { left: 28%; animation-duration: 1.1s; animation-delay: 0.2s; }
+.raindrop:nth-child(5)  { left: 35%; animation-duration: 1.3s; animation-delay: 0.4s; }
+.raindrop:nth-child(6)  { left: 42%; animation-duration: 1.5s; animation-delay: 0.2s; }
+.raindrop:nth-child(7)  { left: 50%; animation-duration: 1.2s; animation-delay: 0.5s; }
+.raindrop:nth-child(8)  { left: 58%; animation-duration: 1.1s; animation-delay: 0.3s; }
+.raindrop:nth-child(9)  { left: 65%; animation-duration: 1.6s; animation-delay: 0.6s; }
+.raindrop:nth-child(10) { left: 72%; animation-duration: 1.3s; animation-delay: 0.1s; }
+/* …repeat up to .raindrop:nth-child(50) with different left%, durations, and delays */
+/* Backgrounds */
+.bg-clear { background: linear-gradient(to bottom, #4facfe, #00f2fe); }
+.bg-partly { background: linear-gradient(to bottom, #fbc2eb, #a6c1ee); }
+.bg-overcast { background: linear-gradient(to bottom, #757f9a, #d7dde8); }
+.bg-fog { background: linear-gradient(to bottom, #bdc3c7, #2c3e50); }
+
+
+
+
+/* Thunderstorm flashes */
+/* Thunderstorm */
+.thunder {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: white;
+  opacity: 0;
+  animation: lightning 4s infinite;
+  z-index: 3;
+}
+
+@keyframes lightning {
+  0%, 97%, 100% { opacity: 0; }
+  20%, 22% { opacity: 0.8; }
+  21%, 23% { opacity: 0; }
+}
+
+
+/* Overcast background */
+.bg-overcast {
+  background: linear-gradient(to bottom, #757f9a, #d7dde8);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Cloud element */
+.cloud {
+  position: absolute;
+  top: 20%;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  width: 200px;
+  height: 60px;
+  filter: blur(20px);
+  animation: cloudMove linear infinite;
+  pointer-events: none;
+}
+
+/* Different cloud layers */
+.cloud:nth-child(1) {
+  top: 15%;
+  width: 250px;
+  height: 70px;
+  animation-duration: 120s;
+  left: -300px;
+}
+.cloud:nth-child(2) {
+  top: 30%;
+  width: 300px;
+  height: 80px;
+  animation-duration: 150s;
+  left: -400px;
+}
+.cloud:nth-child(3) {
+  top: 50%;
+  width: 220px;
+  height: 60px;
+  animation-duration: 180s;
+  left: -350px;
+}
+
+/* Cloud movement keyframes */
+@keyframes cloudMove {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(150vw); /* move across screen */
+  }
+}
