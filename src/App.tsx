@@ -64,6 +64,10 @@ function App() {
     99: "bg-storm",
   }
 
+  // Normalize municipality names (removes "City of" and region info)
+  const normalizeName = (name: string) =>
+    name.toLowerCase().replace(/city of |\(.*\)/g, "").trim()
+
   // Parse CSV
   const loadCSV = () => {
     Papa.parse(dataFile, {
@@ -134,7 +138,7 @@ function App() {
         setMessage("Geolocation is not supported by your browser.")
         return
       }
-  
+
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude } = position.coords
@@ -151,14 +155,15 @@ function App() {
               json.address?.municipality ||
               ""
             if (city) {
-              // Check if city exists in your CSV list
+              // Normalize names before matching
               const exists = countryData.find(
-                (row) => row.Municipalities.toLowerCase() === city.toLowerCase()
+                (row) => normalizeName(row.Municipalities) === normalizeName(city)
               )
               if (exists) setSelectedMunicipality(exists.Municipalities)
-              else setMessage(
-                `Detected location "${city}" is not in the list. Please search manually.`
-              )
+              else
+                setMessage(
+                  `Detected location "${city}" is not in the list. Please search manually.`
+                )
             } else {
               setMessage("Unable to detect your city. Please search manually.")
             }
@@ -174,12 +179,11 @@ function App() {
         { enableHighAccuracy: true, timeout: 10000 }
       )
     }
-  
+
     if (!selectedMunicipality && countryData.length > 0) {
       detectLocation()
     }
   }, [countryData])
-  
 
   // Fetch weather when municipality changes
   useEffect(() => {
@@ -198,33 +202,50 @@ function App() {
   const backgroundClass =
     currentCode !== undefined ? weatherBackgrounds[currentCode] : "bg-clear"
 
-    const renderWeatherAnimation = () => {
-      if (!currentCode) return null
-    
-      // Fog animation
-      if ([45, 48].includes(currentCode)) {
-        return (
-          <>
-            <div className="fog-layer"></div>
-            <div className="fog-layer"></div>
-          </>
-        )
-      }
-    
-    // Overcast animation
-if ([3].includes(currentCode)) {
-  return (
-    <>
-      <div className="cloud"></div>
-      <div className="cloud"></div>
-      <div className="cloud"></div>
-    </>
-  )
-}
+  const renderWeatherAnimation = () => {
+    if (!currentCode) return null
 
-      // Rain animation
-      if ([61, 63, 65, 80, 81, 82].includes(currentCode)) {
-        return (
+    // Fog animation
+    if ([45, 48].includes(currentCode)) {
+      return (
+        <>
+          <div className="fog-layer"></div>
+          <div className="fog-layer"></div>
+        </>
+      )
+    }
+
+    // Overcast animation
+    if ([3].includes(currentCode)) {
+      return (
+        <>
+          <div className="cloud"></div>
+          <div className="cloud"></div>
+          <div className="cloud"></div>
+        </>
+      )
+    }
+
+    // Rain animation
+    if ([61, 63, 65, 80, 81, 82].includes(currentCode)) {
+      return (
+        <div className="rain">
+          {Array.from({ length: 50 }).map((_, i) => {
+            const style = {
+              left: `${Math.random() * 100}%`,
+              animationDuration: `${0.5 + Math.random() * 0.5}s`,
+              animationDelay: `${Math.random() * 2}s`,
+            }
+            return <span key={i} className="raindrop" style={style}></span>
+          })}
+        </div>
+      )
+    }
+
+    // Thunderstorm (rain + lightning)
+    if ([95, 96, 99].includes(currentCode)) {
+      return (
+        <>
           <div className="rain">
             {Array.from({ length: 50 }).map((_, i) => {
               const style = {
@@ -235,31 +256,14 @@ if ([3].includes(currentCode)) {
               return <span key={i} className="raindrop" style={style}></span>
             })}
           </div>
-        )
-      }
-    
-      // Thunderstorm (rain + lightning)
-      if ([95, 96, 99].includes(currentCode)) {
-        return (
-          <>
-            <div className="rain">
-              {Array.from({ length: 50 }).map((_, i) => {
-                const style = {
-                  left: `${Math.random() * 100}%`,
-                  animationDuration: `${0.5 + Math.random() * 0.5}s`,
-                  animationDelay: `${Math.random() * 2}s`,
-                }
-                return <span key={i} className="raindrop" style={style}></span>
-              })}
-            </div>
-            <div className="thunder"></div>
-          </>
-        )
-      }
-    
-      return null
+          <div className="thunder"></div>
+        </>
+      )
     }
-    
+
+    return null
+  }
+
   return (
     <div className={`min-h-screen relative overflow-hidden ${backgroundClass}`}>
       {renderWeatherAnimation()}
@@ -270,50 +274,48 @@ if ([3].includes(currentCode)) {
         </h1>
 
         <div className="my-6 max-w-md mx-auto bg-white/40 backdrop-blur-md border border-white/50 rounded-xl p-6 shadow-lg flex flex-col gap-4">
-  {/* Search Input */}
-  <div className="flex flex-col">
-    <label
-      htmlFor="search"
-      className="text-gray-900 font-semibold mb-1 text-sm drop-shadow-md"
-    >
-      Search Municipality
-    </label>
-    <input
-      type="text"
-      id="search"
-      placeholder="Type to search..."
-      value={search}
-      onChange={(e) => setSearch(e.target.value)}
-      className="p-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-    />
-  </div>
+          {/* Search Input */}
+          <div className="flex flex-col">
+            <label
+              htmlFor="search"
+              className="text-gray-900 font-semibold mb-1 text-sm drop-shadow-md"
+            >
+              Search Municipality
+            </label>
+            <input
+              type="text"
+              id="search"
+              placeholder="Type to search..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="p-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
 
-  {/* Select Municipality */}
-  <div className="flex flex-col">
-    <label
-      htmlFor="country"
-      className="text-gray-900 font-semibold mb-1 text-sm drop-shadow-md"
-    >
-      Choose a Municipality
-    </label>
-    <select
-      name="country"
-      id="country"
-      value={selectedMunicipality}
-      onChange={(e) => setSelectedMunicipality(e.target.value)}
-      className="p-3 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400"
-    >
-      <option value="">-- Select --</option>
-      {filteredData.map((row, index) => (
-        <option key={index} value={row[columnToShow[0]]}>
-          {row[columnToShow[0]]}
-        </option>
-      ))}
-    </select>
-  </div>
-</div>
-
-
+          {/* Select Municipality */}
+          <div className="flex flex-col">
+            <label
+              htmlFor="country"
+              className="text-gray-900 font-semibold mb-1 text-sm drop-shadow-md"
+            >
+              Choose a Municipality
+            </label>
+            <select
+              name="country"
+              id="country"
+              value={selectedMunicipality}
+              onChange={(e) => setSelectedMunicipality(e.target.value)}
+              className="p-3 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+              <option value="">-- Select --</option>
+              {filteredData.map((row, index) => (
+                <option key={index} value={row[columnToShow[0]]}>
+                  {row[columnToShow[0]]}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
 
         {message && <p className="text-red-500 text-center">{message}</p>}
 
